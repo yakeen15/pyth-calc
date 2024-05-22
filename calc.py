@@ -1,3 +1,6 @@
+def eval_mul(string):
+    pass
+
 def op_adjacent(string):
     slist = list(string)
     addops = ['+','-']
