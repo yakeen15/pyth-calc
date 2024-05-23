@@ -23,7 +23,15 @@ class Expression:
                 raise ValueError(f"Repeated appearance of opeators symbols at position: {index+1}")
 
     def eval_parenthesis(self):
-        pass
+        paren_count = 0
+        for char in self.expression:
+            if char == '(':
+                #if paren_count
+                paren_count = paren_count + 1
+        while paren_count > 0:
+            for index, char in enumerate(list(self.expression)):
+                if char == '(':
+                    pass
 
     def eval_mul(self):
         string = list(self.expression)
