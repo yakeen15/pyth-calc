@@ -3,6 +3,27 @@ class Expression:
     def __init__(self, expression, precision=2):
         self.expression = expression
         self.precision = precision
+        self.validate()
+
+    def validate(self):
+        if not isinstance(self.expression, str):
+            raise TypeError("Expression must be in string format")
+        valids = ['.', '*', '/', '+', '-', '(', ')']
+        for i in range(10):
+            valids.append(str(i))
+        for char in self.expression:
+            if char not in valids:
+                raise ValueError(f"Unknown symbol: {char}")
+        muls = ['*', '/']
+        allops = muls + ['+', '-']
+        for index, _ in enumerate(list(self.expression)):
+            if index == len(self.expression) - 1:
+                break
+            if self.expression[index] in muls and self.expression[index+1] in allops:
+                raise ValueError(f"Repeated appearance of opeators symbols at position: {index+1}")
+
+    def eval_parenthesis(self):
+        pass
 
     def eval_mul(self):
         string = list(self.expression)
