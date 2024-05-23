@@ -10,25 +10,38 @@ def eval_mul(string):
     while index < len(string):
         char = string[index]
         if char in ops:
-            i = index
+            i = index-1
             while i>-1:
                 if string[i] in fullops or i==0:
                     break
                 i = i-1
-            num1 = float(str(string[i:index]))
-            j = index
+            temp = ''
+            for tempchar in string[i:index]:
+                temp = temp + tempchar
+            num1 = float(str(temp))
+            j = index+1
             while j<len(string):
                 if string[j] in fullops or j==len(string)-1:
+                    j = j - 1 if string[j] in fullops else j
                     break
                 j = j+1
-            num2 = float(str(string[index+1:j]))
+            temp = ''
+            for tempchar in string[index+1:j+1]:
+                temp = temp + tempchar
+            num2 = float(str(temp))
             if char == ops[0]:
                 result = num1*num2
             else:
                 result = num1/num2
-            string[i:j] = str(round(result, PREC))
+            del string[i:j+1]
+            result = str(round(result, PREC))
+            for r_index, r_char in enumerate(list(result)):
+                string.insert(i+r_index, r_char)
         index = index + 1
-    return str(string)
+    simpstring = ''
+    for simpchar in string:
+        simpstring = simpstring+simpchar
+    return str(simpstring)
 
         
 
@@ -84,13 +97,11 @@ def eval_expr(ops, nums):
     return (-1)**negcount*(round(float(nums[0]), PREC))
 
 
-inputstring = input("Enter expression: ")
-print(eval_mul(inputstring))
-
-#for i in range(100):
-#    inputstring = input("Enter expression: ")
-#    if inputstring == 'x':
-#        break
-#    mainstring = '0'+op_adjacent(inputstring)
-#    ops, nums = separate_expression(mainstring)
-#    print(eval_expr(ops, nums))
+for i in range(100):
+    inputstring = input("Enter expression: ")
+    if inputstring == 'x':
+        break
+    inputstring = eval_mul(inputstring)
+    mainstring = '0'+op_adjacent(inputstring)
+    ops, nums = separate_expression(mainstring)
+    print(eval_expr(ops, nums))
