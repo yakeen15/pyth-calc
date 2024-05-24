@@ -3,6 +3,7 @@ class Expression:
     def __init__(self, expression, precision=2):
         self.expression = expression
         self.precision = precision
+        self.result = 0.0
         self.validate()
 
     def validate(self):
@@ -15,15 +16,19 @@ class Expression:
             if char not in valids:
                 raise ValueError(f"Unknown symbol: {char}")
         muls = ['*', '/']
-        allops = muls + ['+', '-']
+        allops = muls
         for index, _ in enumerate(list(self.expression)):
             if index == len(self.expression) - 1:
                 break
             if self.expression[index] in muls and self.expression[index+1] in allops:
                 raise ValueError(f"Repeated appearance of opeators symbols at position: {index+1}")
 
+    def get_expression(self):
+        return self.expression 
+
     def eval_parenthesis(self):
         paren_count = 0
+        pos = [0, 0]
         for char in self.expression:
             if char == '(':
                 #if paren_count
@@ -31,7 +36,16 @@ class Expression:
         while paren_count > 0:
             for index, char in enumerate(list(self.expression)):
                 if char == '(':
-                    pass
+                    pos[0] = index
+                elif char == ')':
+                    pos[1] = index
+                if pos[0] != 0 and pos[1] != 0:
+                    break
+            subexpression = Expression(self.expression[pos[0]+1:pos[1]])
+            subexpression.evaluate()
+            self.expression = self.expression[0:pos[0]] + str(subexpression.result) + self.expression[pos[1]+1:len(self.expression)]
+            paren_count = paren_count - 1
+            
 
     def eval_mul(self):
         string = list(self.expression)
@@ -123,11 +137,15 @@ class Expression:
         return (-1) ** negcount * (round(float(nums[0]), self.precision))
 
     def evaluate(self):
+        self.expression = self.expression.replace('*+','*')
+        self.expression = self.expression.replace('/+','/')
+        self.eval_parenthesis()
         self.eval_mul()
         self.op_adjacent()
         self.expression = '0' + self.expression
         ops, nums = self.separate_expression()
-        return self.eval_expr(ops, nums)
+        self.result = self.eval_expr(ops, nums)
+        return self.result
 
 
 if __name__ == "__main__":
